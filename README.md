@@ -1,34 +1,33 @@
 # dmarket_bot
-Bot for automatic trading on dmarket 
+Bot for automatic trading on dmarket
 
+### How to use:
 
-
-
-### Для использования:
-
-- git clone https://github.com/timagr615/dmarket_bot.git
-- cd dmarket_bot
-- Создайте виртуальное окружение, например python3 -m venv venv
-- Затем активируйте virtualenv . venv/bin/activate
-- pip install -r requirements.txt
-- Создать файл `credentials.py` в корневой директории с следующим содержанием:
+- `git clone https://github.com/timagr615/dmarket_bot.git`
+- `cd dmarket_bot`
+- Create a virtual environment, for example: `python3 -m venv venv`
+- Then activate the virtual environment: `. venv/bin/activate`
+- `pip install -r requirements.txt`
+- Create a file `credentials.py` in the root directory with the following content:
 
 ```python
 PUBLIC_KEY = "your public api key"
 SECRET_KEY = "your secret api key"
 ```
 
-- Запустить бота можно с помощью файла `main.py`
+- You can start the bot using the `main.py` file.
 
-## Возможности
-- Мультиигровая торговля. Поддержка всех игр, доступных на dmarket
-- Автоматический анализ базы скинов для каждой игры
-- Выставление ордеров, отобранных по 15-ти различным параметрам. Борьба ордеров за первое место.
-- Автоматическое выставление скинов на продажу после покупки. Корректировка цен в соответствии с настройками и борьба за 1 место.
-## Параметры
-Все параметры бота находятся в файле `config.py` в корневой директории бота.
-### Подробное описание параметров:
-- `logger_config`- конфигурация логгера
+## Features
+- Multi-game trading. Supports all games available on dmarket.
+- Automatic analysis of the skin database for each game.
+- Placing orders selected by 15 different parameters. Competing for the top spot in orders.
+- Automatic listing of skins for sale after purchase. Price adjustment according to settings and competition for the top position.
+
+## Parameters
+All bot parameters are located in the `config.py` file in the root directory of the bot.
+
+### Detailed description of parameters:
+- `logger_config` - logger configuration:
 ```python
 logger_config = {
     "handlers": [
@@ -39,39 +38,40 @@ logger_config = {
 }
 logger.configure(**logger_config)
 ```
-`"sink": sys.stderr` -  выводлогов в консоль
-`"sink": "log/info.log"` - вывод логов в файл
-`'level': 'INFO'` это уровень логов. Возможные уровни: `TRACE, DEBUG, INFO, SUCCESS, WARNING, ERROR , CRITICAL`. Каждый следующий слева направо уровень запрещайт вывод логов более низкого уровня. То есть если указан уровень `INFO`, сообщения с уровнем `TRACE, DEBUG` выводиться не будут.
-- `GAMES = [Games.CS, Games.DOTA, Games.RUST]` - список игр, по которым будет производиться торговля. Доступные значения: `Games.CS, Games.DOTA, Games.RUST, Games.TF2`
-- `PREV_BASE = 60 * 60 * 4` - обновление базы скинов каждые `PREV_BASE` секунд
-- `ORDERS_BASE = 60 * 10`- обновление базы ордеров каждые `ORDERS_BASE` секунд
-- `BAD_ITEMS` - список слов. Если слово входит в название предмета, то он не будет куплен.
+`"sink": sys.stderr` - logs output to the console  
+`"sink": "log/info.log"` - logs output to a file  
+`'level': 'INFO'` - log level. Possible levels: `TRACE, DEBUG, INFO, SUCCESS, WARNING, ERROR, CRITICAL`. Each subsequent level from left to right restricts logging of lower levels. For example, if the `INFO` level is set, messages with `TRACE, DEBUG` levels will not be logged.
 
-### BuyParams -  параметры выставления ордеров
--  `STOP_ORDERS_BALANCE = 1000` - Останавливать выставление ордеров при балансе на 10 долларов меньше минимальной цены ордера
-- `MIN_AVG_PRICE = 400` - Минимальная средняя цена за последние 20 покупок предмета в центах. Предметы с более низкой ценой не будут добавляться в базу скинов.
-- `MAX_AVG_PRICE = 3500` - Максимальная средняя цена за последние 20 покупок предмета в центах. Предметы с более высокой ценой не будут добавляться в базу скинов.
-- `FREQUENCY = True` - Включить ли алгоритм высокочастотной торговли. При значении True следует указывать параметр `PROFIT_PERCENT = 6` или меньше, а параметр `GOOD_POINTS_PERCENT = 50` или выше
--    `MIN_PRICE = 300` - минимальная средняя цена. Ниже этой цены ордер выставляться не будет.
--    `MAX_PRICE = 3000` - максимальная средняя цена. Выше этой цены ордер на предмет не поставится.
+- `GAMES = [Games.CS, Games.DOTA, Games.RUST]` - list of games to trade. Available values: `Games.CS, Games.DOTA, Games.RUST, Games.TF2`
+- `PREV_BASE = 60 * 60 * 4` - update skin database every `PREV_BASE` seconds
+- `ORDERS_BASE = 60 * 10` - update orders database every `ORDERS_BASE` seconds
+- `BAD_ITEMS` - list of words. If a word is in the item's name, it will not be bought.
 
--    `PROFIT_PERCENT = 7` - минимальный профит, который мы хотим получить, если купим предмет по цене текущего первого ордера.
--    `GOOD_POINTS_PERCENT = 50` - процент точек в истории 20-ти последних продаж, соответствующих параметру `PROFIT_PERCENT = 7`. В данном случае, если менне 50 процентов точек продавались с профитом меньше 7 процентов, то ордер на такой предмет ставиться не будет.
--    `AVG_PRICE_COUNT = 7` - высчитование средней цены по последним 7 продажам для формирования предполагаемого профита.
--    `ALL_SALES = 100` - минимальное количество продаж за весь период, ниже которого ордер выставляться не будет
--    `DAYS_COUNT = 20` - не менее `SALE_COUNT = 15` продаж за `DAYS_COUNT = 20` дней. Отбор по популярности`
--    `SALE_COUNT = 15` - не менее `SALE_COUNT = 15` продаж за `DAYS_COUNT = 20` дней. Отбор по популярности`
--    `LAST_SALE = 2`  - последняя продажа не позднее LAST_SALE дней назад
--   `FIRST_SALE = 15`  - первая покупка не позже FIRST_SALE дней назад
+### BuyParams - Order placement parameters
+- `STOP_ORDERS_BALANCE = 1000` - Stop placing orders when the balance is $10 below the minimum order price.
+- `MIN_AVG_PRICE = 400` - Minimum average price for the last 20 item purchases in cents. Items with a lower price will not be added to the skin database.
+- `MAX_AVG_PRICE = 3500` - Maximum average price for the last 20 item purchases in cents. Items with a higher price will not be added to the skin database.
+- `FREQUENCY = True` - Enable high-frequency trading algorithm. If set to True, the `PROFIT_PERCENT = 6` parameter should be specified or less, and the `GOOD_POINTS_PERCENT = 50` parameter should be higher or equal.
+- `MIN_PRICE = 300` - Minimum average price. Orders will not be placed below this price.
+- `MAX_PRICE = 3000` - Maximum average price. Orders will not be placed above this price.
 
--    `MAX_COUNT_SELL_OFFERS = 30` - максимальное количество выставленных предметов на продажу. Выше 30 ордер не поставится.
+- `PROFIT_PERCENT = 7` - Minimum profit we want to get if we buy an item at the price of the current top order.
+- `GOOD_POINTS_PERCENT = 50` - Percentage of points in the last 20 sales history that match the `PROFIT_PERCENT = 7` parameter. In this case, if less than 50% of the points were sold with a profit of less than 7%, an order will not be placed for such an item.
+- `AVG_PRICE_COUNT = 7` - Calculate the average price for the last 7 sales to estimate the expected profit.
+- `ALL_SALES = 100` - Minimum number of sales for the entire period, below which an order will not be placed.
+- `DAYS_COUNT = 20` - At least `SALE_COUNT = 15` sales in `DAYS_COUNT = 20` days. Popularity selection.
+- `SALE_COUNT = 15` - At least `SALE_COUNT = 15` sales in `DAYS_COUNT = 20` days. Popularity selection.
+- `LAST_SALE = 2` - The last sale no later than 2 days ago.
+- `FIRST_SALE = 15` - The first purchase no later than 15 days ago.
 
--    `BOOST_PERCENT = 24` - удаляем до 3 точек, которые выше средней цены на 24 процента
--    `BOOST_POINTS = 3` - удаляем до 3 точек, которые выше средней цены на 24 процента
+- `MAX_COUNT_SELL_OFFERS = 30` - Maximum number of items listed for sale. Orders will not be placed if the number exceeds 30.
 
--    `MAX_THRESHOLD = 1`  - Максимальное повышение цены на MAX_THRESHOLD процентов от текущего ордера. Максимальное повышение цены нашего ордера от цены текущего первого ордера
--   `MIN_THRESHOLD = 3` - Максимальное понижение цены нашего ордера от цены текущего. Задают границы изменения цены для ордера
+- `BOOST_PERCENT = 24` - Remove up to 3 points that are above the average price by 24%.
+- `BOOST_POINTS = 3` - Remove up to 3 points that are above the average price by 24%.
 
-### SellParams - парамтры выставления на продажу
-- `MIN_PERCENT = 4` - минимальный процент профита
--   `MAX_PERCENT = 12` - максимальный процент профита
+- `MAX_THRESHOLD = 1` - Maximum price increase by 1% from the current order. Maximum increase in our order price from the current top order price.
+- `MIN_THRESHOLD = 3` - Maximum price decrease for our order from the current one. These set the price change limits for the order.
+
+### SellParams - Parameters for placing items for sale
+- `MIN_PERCENT = 4` - Minimum profit percentage.
+- `MAX_PERCENT = 12` - Maximum profit percentage.
